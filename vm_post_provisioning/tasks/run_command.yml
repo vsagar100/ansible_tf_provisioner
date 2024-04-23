@@ -1,0 +1,26 @@
+- block: 
+  - name: test command1
+    shell: whoami
+    register: op
+  - debug:
+      var: op
+  - name: test command2
+    shell: hostname
+    register: op
+  - debug:
+      var: op
+  - block:
+    - name: Install Nginx 
+      apt: 
+        name: nginx 
+        state: present 
+    - name: Start Nginx 
+      service: 
+        name: nginx 
+        state: started 
+        enabled: true
+      register: op
+    - debug:
+        var: op
+    become: true
+    when: item_hypervisor != "vcenter"

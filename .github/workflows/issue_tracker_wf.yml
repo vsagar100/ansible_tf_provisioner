@@ -1,0 +1,59 @@
+# code: language=yaml
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+---
+name: Issue Workflows
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - milestoned
+
+  issue_comment:
+    types:
+      - created
+      - edited
+      - deleted
+
+  push:
+    branches: ["*"]
+
+  workflow_call:
+
+  workflow_dispatch:
+
+env:
+  SCRIPT_PATH: "${{ github.workspace }}/.issue-wf/scripts"
+jobs:
+  act-on-issue:
+    runs-on: ubuntu-latest
+    env:
+      COMMENT_BODY: ${{ github.event.comment.body }}
+      COMMENT_AUTHOR: ${{ github.event.comment.user.login }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+    steps:  
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: checkout-workflow
+        uses: actions/checkout@v3
+        with:
+          repository: Innovate/gat_terraformHyperscaler
+          path: .issue-wf
+          ref: sv_dev
+
+      - name: script-requirements
+        run: sudo apt install jq
+
+      - name: Run script on comment        
+        run: |
+            echo "Comment: $COMMENT_BODY"
+            echo "Author: $COMMENT_AUTHOR"
+            echo "Issue Number: $ISSUE_NUMBER"       
+
+      - name: Perform action on Issue Updates
+        run: |                                      
+            chmod +x "${SCRIPT_PATH}/sp_operations.sh"
+            bash "${SCRIPT_PATH}/sp_operations.sh" $ISSUE_NUMBER $COMMENT_BODY
+            
+       

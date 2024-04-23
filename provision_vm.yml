@@ -1,0 +1,36 @@
+---
+  - name: Terraform VM provisioning
+    hosts: localhost
+    # gather_facts: true
+    vars:
+      hypervisors:
+            - azure
+          # - gcp   
+            # - vcenter 
+      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    tasks:
+      - include_role:
+          name: execute_terraform
+          tasks_from: provision_vm.yml
+        loop: "{{ hypervisors }}"
+        loop_control:
+          loop_var: item_hypervisor
+
+
+  # - name: Terraform VM post provisioning
+  #   hosts: "{{hostvars['localhost']['tf_public_ip_address']}}"
+  #   gather_facts: true
+  #   vars:
+  #     hypervisors:
+  #         - azure
+  #       # - gcp   
+  #         # - vcenter
+  #     # ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+  #   tasks:    
+  #     - include_role:
+  #         name: vm_post_provisioning
+  #         tasks_from: run_command.yml
+  #       loop: "{{ hypervisors }}"
+  #       loop_control:
+  #         loop_var: item_hypervisor
+            

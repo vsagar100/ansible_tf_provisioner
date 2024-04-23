@@ -1,0 +1,13 @@
+  - name: Sample playbook
+    hosts: localhost
+    gather_facts: false
+    vars:
+      item_hypervisor: "azure"
+          #  - azure
+        # - gcp   
+          # - vcenter
+    tasks:  
+      - include_vars: "terraform_vm_provisioning/defaults/main.yml"  
+      - include_role: 
+          name: vm_post_provisioning
+          tasks_from: run_command_rest

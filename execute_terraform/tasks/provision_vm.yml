@@ -1,0 +1,194 @@
+---
+# tasks file for terraform_gcp
+- name: Set terraform execution directory
+  set_fact:
+    tf_hypervisor_exec_path: "{{ tf_exec_path }}/{{ item_hypervisor }}/"
+    tf_output_vars_ansible_local_path: "/home/ansible/code/terraform/"
+
+- name: Get the hypervisor specific var handle
+  set_fact:
+    tf_vars: "{{ lookup('vars', item_hypervisor)}}"
+
+- name: Git checkout
+  git:
+      repo: "{{ tf_vars.git_repo_url | regex_replace('://', '://'+ git_token + '@') }}"
+      dest: "{{ tf_hypervisor_exec_path }}"
+      version: "{{ tf_vars.git_branch}}"
+      accept_hostkey: true
+      force: yes 
+
+# - name: Copying required files to execution node
+#   copy:
+#      dest: "{{ tf_hypervisor_exec_path }}"
+#      src: "{{ item_hypervisor + '/' + item }}"
+#   with_items:
+#    - locals.tf
+#    - main.tf
+#    - output.tf
+#    - providers.tf
+#    - variables.tf
+
+- name: Copy required files to execution node gcp
+  template:
+     dest: "{{tf_hypervisor_exec_path}}/{{item.dest_name}}"
+     src: "{{ item.template_name }}"
+  with_items:
+    - { template_name: '{{ item_hypervisor}}/vars.tfvars.j2', dest_name: 'vars.tfvars' }
+    - { template_name: '{{ item_hypervisor}}/service_principal.json.j2', dest_name: 'service_principal.json' }
+  when: item_hypervisor == "gcp"
+
+- name: Copy required files to execution node azure
+  template:
+     dest: "{{tf_hypervisor_exec_path}}/{{item.dest_name}}"
+     src: "{{ item.template_name }}"
+  with_items:
+    - { template_name: '{{ item_hypervisor}}/vars.tfvars.j2', dest_name: 'vars.tfvars' }
+  when: item_hypervisor == "azure"
+
+- name: Copy required files to execution node vcenter
+  template:
+     dest: "{{tf_hypervisor_exec_path/item.dest_name}}"
+     src: "{{ item.template_name }}"
+  with_items:
+    - { template_name: '{{ item_hypervisor}}/vars.tfvars.j2', dest_name: 'vars.tfvars' }
+  when: item_hypervisor == "vcenter"
+
+- name: Executing terraform manifests
+  terraform:
+    project_path: '{{ tf_hypervisor_exec_path }}'
+    force_init: true
+    complex_vars: true
+    variables_files:
+    - 'vars.tfvars'
+    state: "{{ tf_vars.terraform_state }}"
+  register: terraform_op
+  # failed_when: terraform_op.rc is defined and terraform_op.rc != 0
+#   async: 1000
+#   poll: 0
+
+# - name: Check on an async task executing the terraform manifest
+#   async_status:
+#     jid: "{{ terraform_op.ansible_job_id }}"
+#   register: tf_job_result
+#   until: tf_job_result.finished
+#   retries: 100
+#   delay: 30
+
+- block:
+    - name: Fetch output vars from manged host to ansible control node
+      fetch:
+        src: "{{tf_hypervisor_exec_path}}/{{item_hypervisor}}_output_vars_file.yml"
+        dest: "./{{ tf_output_vars_ansible_local_path }}"
+
+    # - name: Fetch SSH Private key to ansible control node
+    #   fetch:
+    #     src: "{{ tf_hypervisor_exec_path }}/ansible_ssh_private_key"
+    #     dest: "{{ tf_output_vars_ansible_local_path }}"
+
+    - name: Include terraform output vars file
+      include_vars: "{{tf_output_vars_ansible_local_path}}/{{ ansible_hostname }}/{{ tf_hypervisor_exec_path }}/{{item_hypervisor}}_output_vars_file.yml"
+    - name: Print 
+      debug:
+        var: tf_gcp_vm_public_ip
+  when: item_hypervisor == "gcp"
+
+- block:
+    - name: Fetch output vars from manged host to ansible control node
+      fetch:
+        src: "{{tf_hypervisor_exec_path}}/{{item_hypervisor}}_output_vars_file.yml"
+        dest: "./{{ tf_output_vars_ansible_local_path }}"
+      register: fetch_op_vars
+
+    - name: Include terraform output vars file
+      include_vars: "{{fetch_op_vars.dest}}"
+    - name: Print terraform var
+      debug:
+        var: tf_vcenter_vm_ip 
+    - set_fact:
+        tf_public_ip_address: "{{ tf_vcenter_vm_ip }}"
+    - name: add new host
+      add_host: 
+        # name: "{{tf_public_ip_address}}"
+        hostname: "{{ tf_vcenter_vm_ip }}"
+        # ansible_ssh_private_key_file: "~/.ssh/ansible_azure_vars_pk_file"
+        ansible_user: "ansible"
+        ansible_password: "Welcome@1"
+        host_key_checking: false
+    
+    - name: set stats
+      set_stats:
+        data:
+          tf_public_ip_address: "{{ tf_vcenter_vm_ip }}"
+  when: item_hypervisor == "vcenter"
+
+
+- block:
+    - name: Fetch output vars from manged host to ansible control node
+      fetch:
+        src: "{{tf_hypervisor_exec_path}}/ansible_azure_vars_file.yml"
+        dest: "{{ tf_output_vars_ansible_local_path }}"
+      register: fetch_op_vars
+    
+    - name: Fetch output vars from manged host to ansible control node
+      fetch:
+        src: "{{tf_hypervisor_exec_path}}/ansible_azure_vars_pk_file"
+        dest: "{{ tf_output_vars_ansible_local_path }}"
+      register: fetch_op_pk
+    
+    - debug:
+        var: fetch_op_vars.dest
+
+    - name: Include terraform output vars file
+      include_vars: "{{fetch_op_vars.dest}}"
+    - name: Print 
+      debug:
+        var: tf_public_ip_address
+    - name: Print 
+      debug:
+        var: tf_tls_public_key
+
+    - name: Create public key file
+      copy:
+        dest: "/tmp/ansible_azure_vars_pk_file.pub"
+        content: "{{ tf_tls_public_key }}"
+        mode: 0700
+      register: copy
+      # delegate_to: localhost
+    
+    - name: Create private key file
+      copy:
+        dest: "/tmp/ansible_azure_vars_pk_file"
+        src: "{{ fetch_op_pk.dest }}"
+        mode: 0700
+      register: copy
+    
+    - debug:
+        msg: "{{ lookup('file', copy.dest) }}"
+
+      # delegate_to: localhost
+    # - name: add new host
+    #   add_host: 
+    #     # name: "{{tf_public_ip_address}}"
+    #     hostname: "{{ tf_public_ip_address }}"
+    #     ansible_ssh_private_key_file: "/tmp/ansible_azure_vars_pk_file"
+    #     ansible_user: "{{tf_vars.vm_user_name}}"
+    #     host_key_checking: false
+    # - name: Write the new VM instance host key to known hosts
+    #   connection: local
+    #   shell: "ssh-keyscan -H {{ inventory_hostname }} >> ~/.ssh/known_hosts"
+    # - name: Add/update the public key
+    #   known_hosts:
+    #       name: "{{ tf_public_ip_address }}"    
+    #       key:  "{{ tf_tls_public_key }}"   
+          
+
+    - name: set stats
+      set_stats:
+        data:
+          tf_public_ip_address: "{{ tf_public_ip_address }}"
+    
+    - include_role: 
+          name: vm_post_provisioning
+          tasks_from: run_command_rest
+      
+  when: item_hypervisor == "azure"  

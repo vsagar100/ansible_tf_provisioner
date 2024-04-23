@@ -1,0 +1,41 @@
+---
+  - set_fact:
+      validate_cert: no
+  
+
+  
+  - name: Get the hypervisor specific var handle
+    set_fact:
+      tf_vars: "{{ lookup('vars', item_hypervisor)}}"
+  - name: Login into Azure & get brearer toke
+    uri:
+      url: https://login.microsoftonline.com/{{tf_vars.tenant_id}}/oauth2/token
+      validate_certs: "{{ validate_cert }}"
+      method: POST
+      body_format: form-urlencoded      
+      body: 
+        - [client_id, "{{ tf_vars.client_id }}"]
+        - [client_secret, "{{tf_vars.client_secret}}"]
+        - [resource, "https://management.azure.com/"]
+        - [grant_type, "client_credentials"]
+    register: brearer_token
+  - debug:
+      var: tfvars.run_command
+  - name: Run command on VM using REST API
+    uri:
+      url: "https://management.azure.com/subscriptions/{{tf_vars.subscription_id}}/resourceGroups/{{tf_vars.resource_group_name }}/providers/Microsoft.Compute/virtualMachines/{{tf_vars.vm_name}}/runCommand?api-version=2022-11-01"
+      validate_certs: "{{ validate_cert }}"
+      method: POST
+      return_content: true
+      body_format: raw
+      body: '{ "commandId": "RunShellScript", "script": [ "apt update && apt install nginx -y" ] }'
+      headers:
+        Authorization: "Bearer {{ brearer_token.json.access_token }}"
+        Content-Type: "application/json"
+      status_code :
+        - 200
+        - 202
+    register: run_command_op
+
+  - debug:
+      var: run_command_op

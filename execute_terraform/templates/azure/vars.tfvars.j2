@@ -1,0 +1,16 @@
+resource_group_name = "{{azure.resource_group_name}}"
+resource_group_location = "{{azure.resource_group_location}}"
+address_space = ["10.0.0.0/16"]
+vnet_name = "vnet1"
+subnet_details = [
+    {
+      ip       = "10.0.1.0/24"
+      name     = "subnet1"
+    },
+   ]
+subscription_id = "{{ azure.subscription_id }}"
+client_id = "{{ azure.client_id }}"
+client_secret = "{{ azure.client_secret }}"
+tenant_id = "{{ azure.tenant_id }}"
+vm_name = "{{ azure.vm_name }}"
+vm_user_name = "{{ azure.vm_user_name }}"

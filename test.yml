@@ -1,0 +1,26 @@
+---
+  - name: VCenter  Facts Gathering
+    hosts: localhost
+    gather_facts: true
+    tasks:
+    - set_fact:
+        tf_public_ip_address: "192.168.80.216"
+    - debug:
+        var: inventory_hostname
+    # - name: add new host
+    #   add_host: 
+    #     # name: "{{tf_public_ip_address}}"
+    #     hostname: "{{ tf_public_ip_address }}"
+    #     ansible_ssh_private_key_file: "~/.ssh/ansible_azure_vars_pk_file"
+    #     ansible_user: "testuser"
+    #     host_key_checking: false
+    - name: add new host
+      add_host: 
+        # name: "{{tf_public_ip_address}}"
+        hostname: "{{ tf_public_ip_address }}"
+        # ansible_ssh_private_key_file: "~/.ssh/ansible_azure_vars_pk_file"
+        ansible_user: "ansible"
+        ansible_password: "Welcome@1"
+        host_key_checking: false
+
+  - import_playbook: sample.yml

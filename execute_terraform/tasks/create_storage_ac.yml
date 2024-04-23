@@ -1,0 +1,30 @@
+---
+  - name: Set terraform execution directory
+    set_fact:
+      tf_hypervisor_exec_path: "{{ tf_exec_path }}/azure/"
+      tf_output_vars_ansible_local_path: "/home/ansible/code/terraform/"
+
+  - name: Git checkout
+    git:
+        repo: "{{ azure.git_repo_url | regex_replace('://', '://'+ git_token + '@') }}"
+        dest: "{{ tf_hypervisor_exec_path }}"
+        version: "state_file"
+        accept_hostkey: true
+        force: yes 
+
+  - name: Copy required files to execution node azure
+    template:
+      dest: "{{tf_hypervisor_exec_path}}/vars.tfvars"
+      src: "azure/vars.state_file_tfvars.j2"
+
+  - name: Executing terraform manifests
+    terraform:
+      project_path: '{{ tf_hypervisor_exec_path }}'
+      force_init: true
+      complex_vars: true
+      variables_files:
+      - 'vars.tfvars'
+      state: "{{ azure.terraform_state }}"
+    register: terraform_op
+
+

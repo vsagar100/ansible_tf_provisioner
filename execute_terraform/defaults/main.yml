@@ -1,0 +1,66 @@
+---
+# default vars for terraform
+tf_exec_path: "/tmp/terraform"
+
+
+  # - aws
+  # - azure
+  # - vcenter
+gcp:       
+  ############################# Subscription Vars Section ###############################################
+  private_key_id: "77503b04a1e0ab65ac52c8c359d194ddf7cabc06"
+  project_id: "terfform-poc"                    
+  private_key: "-----BEGIN PRIVATE KEY-----\\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCgvsavfhd/NFw1\\nNLeV4rvjCKLzbksq3r7VZNVRuUJ+yU7gDXlKtYxFn7bACZtK6nJr1ZW075RPVH0U\\n/5vLYF948eKgMS+B7a9wpSW/ygyZRz1Z7vc/TkMB/9WiWIAtLcOFIzSG/mv2DhWC\\n6pgjkWc5+nUMBUJBsIQ7AfAwwV4W2p0FVP/f+83Ilzl+RWhCeIQZw8VxucfuitKc\\n5KoC9yIfJjTZu+qH7xi6WyAS3VwVLeIGaBH0F7g2xejbX2oVaRdScG5p9iMAl5VT\\nkvgj/xHDuPYvX71StVTTd0htduGf5VklKaWf44ZZ/+XGl+jhJbjLQ+7Q0PNgLlRW\\nwglLWnkvAgMBAAECggEAAiWB0JnfMXQUqgBN2Z3Fcb7Uk4XLE1wPG1CiUi0DzlDj\\nyN7hTF7CxiF0d5ik64rKmh616JiyeKwgruB3T+UrjASZJiWHnkvHOr4OXOWP2+my\\nqfeMXkzljVXBekeFzh1KExCru0LjAWZnC1MNz1Z70yvggH9AxxmKuPso7b2HFHV8\\nWqV8id0D5PnokxRZZDP0WGJWmn0PBmalC31u27CbDqvupAyVo3uRMo/rZb7WRoyZ\\ndvpnfJ1rrsuvyLIkTtmMXknABnCbq6zq/y6sZdrYb0Gmqe8iVkPeAz63oThO5dPM\\nIE56BJmgFd3d8aXOV8a6LeCG+TrFSHiWvol6S05C3QKBgQDP+dS2hIo1Qp2oig3c\\n44i0qIl7/bdZ+a4glNO7CauVW5iRkoE0n+jeP8PCg56nGh+FaSCs1mKdZcf7KNYl\\nJcVXCRlccLc4M3RIDiyPjPnp4yc2yD0Jf/sV+Eo+xSEaGj7QHAte3Ce0p5zLiKvE\\nbcq+3j218RCVtFW2LAiFOzWLuwKBgQDF3Po93sg5tJAwLyaaPBOueFpGNP+snYnH\\nBKIs6LL7mZJSVpN+yzTCAU2GAHggQDf8l9ikbPLYstNDpW0SSOuq3JYShdm3QRrR\\n2FObvcd8xAP4F3NsISSGCl7k25J7lLi4hzRfpWFTAnQDc9jk4M8j41afU+jylslW\\n+udRNjofHQKBgBMY++FutkpBvbx2QOOhuTHtsAJEwAtxE/5F7FNmhe0HJjFn5Jly\\nfa266Tz5XR43FeHoT2nPneqaKAz2KQPsPfzKBxwn9YshnnHna0wbQ++oPjeXl5NB\\nv0q7LAYrj+iXtGDj0l95k+PQ6GMAP9Wfx1hTjBMi+cTldGFwFbA2Sap1AoGABHM9\\n5ZpXIoUfIRZOZfWn86qdTSrv/S/l42YFR8FMFUCU++kalCV54EsrNTJZgVAwcivw\\nIXKZ26nZ+pGD7H9bXZJshaohBXAfbEzTRJN2IyY9eJz+aZYtPh6Jl9ggaUslBHF2\\nChisIbPSbCl03WD5B7ObRSYb/SjLCnvGLBtuHzkCgYBCMUpopWKm8ar7iDGkpBGj\\nvNNwXiaotKYsZzWt5M2+fwMNzAutCJq5YQZM64BV1Vh4Chan2ChTm4r0+XybwVsd\\nmLsFwuSgxwjkRHF7ta7PJNOtir2K2Z71TFzB1NHe+nY24cOVoExivrDu5wkgbn+e\\ngxUR7ma7No5dVGUpxD1T9w==\\n-----END PRIVATE KEY-----\\n"
+  client_email: "sv-id-resource-prov@terfform-poc.iam.gserviceaccount.com"
+  client_id: "106241824336426945652"
+  ############################# End of Subscription Vars Section ########################################
+  git_repo_url: "git@github.kyndryl.net:Sagar-Vispute/terraform_{{item_hypervisor}}_vm_provisioning.git"
+  git_branch: "sagar-dev"
+  terraform_state: "present"
+  region:  "us-west1-a"
+  project_name: "terfform-poc"
+  subnetwork_region: "us-west1"
+  network: "virt-network"
+  vm_name: "vm-1001"
+  vm_username: "test-user"
+
+vcenter:
+  vmware_user: "{{ lookup('env', 'VMWARE_USER') }}"
+  vmware_password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
+  vmware_host: "{{ lookup('env', 'VMWARE_HOST') }}"
+  validate_cert: "{{ lookup('env', 'VMWARE_VALIDATE_CERTS') }}"   
+
+  git_repo_url: "git@github.kyndryl.net:Sagar-Vispute/terraform_vcenter_vm_provisioning.git"
+  git_branch: "sagar-dev"
+  terraform_state: "present"
+  datacenter: "DevOps-vLab"
+  datastore: "devops-vlab-storage1"
+  cluster: "DevOps-vLab-Cluster"
+  esxi_host: "devops-vlab-esx2.icds.online"
+  network: "DevOps-vLab-VMNetwork"
+  vm_template: "GI-RHEL8.4-00011-16DEC2022"
+  # "GI-RHEL8.4-00011-16DEC2022"
+  vm_name: "vm-1001"
+  disk_size: 40
+  thin_prov: true
+
+
+############################# Subscription Vars Section ###############################################
+azure:
+  subscription_id: "46b94f70-3b0f-490f-81d9-4bc7421932b4"
+  client_id: "de83caaf-acaa-4ea7-89b6-55367447da9e"
+  tenant_id: "f790de86-ce1b-443a-8ba2-4e5ed3b5bb7d"
+############################# Ens of Subscription Vars Section ########################################
+  resource_group_name : "rg1"
+  resource_group_location : "centralindia"
+  storage_account_name: "storage146b94f70"
+  storage_resource_group_name: "storage_rg"
+############################# Terraform Vars Section ##################################################
+  terraform_state: "present"
+############################# End of Terraform Vars Section ###########################################
+  git_repo_url: "https://github.kyndryl.net/Sagar-Vispute/terraform_azure.git"
+  git_branch: "sagar-dev"
+
+  vm_name: "TestVM123"
+  vm_user_name: "testuser"
+  run_command: "apt update && apt install nginx -y"

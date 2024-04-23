@@ -1,0 +1,7 @@
+---
+  - name: Call Storage A/C creation playbook
+    import_playbook: create_storage_ac.yml
+  
+  - name: Call VM Provisioning Terraform playbook
+    import_playbook: provision_vm.yml
+

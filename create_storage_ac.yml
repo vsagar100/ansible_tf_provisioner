@@ -1,0 +1,11 @@
+---
+  - name: Terraform VM provisioning
+    hosts: localhost
+    # gather_facts: true
+    vars:      
+      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    tasks:
+      - name: Call terraform code to create storage account to save state file
+        include_role:
+          name: execute_terraform
+          tasks_from: create_storage_ac.yml

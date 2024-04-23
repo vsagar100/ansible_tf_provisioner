@@ -1,0 +1,17 @@
+vsphere_user = "{{ vcenter.vmware_user }}"
+vsphere_password="{{ vcenter.vmware_password }}"
+vsphere_server="{{ vcenter.vmware_host }}"
+#allow_unverified_ssl should true if validate cert: no
+allow_unverified_ssl=true 
+#"{{ not vcenter.validate_cert | string | lower | bool}}"
+
+datacenter= "{{ vcenter.datacenter }}"
+datastore= "{{ vcenter.datastore }}"
+cluster= "{{ vcenter.cluster }}"
+esxi_host="{{ vcenter.esxi_host }}"
+network= "{{ vcenter.network }}"
+vm_template= "{{ vcenter.vm_template }}"
+vm_name= "{{ vcenter.vm_name }}"
+disk_size= "{{ vcenter.disk_size }}"
+thin_prov= true
+#"{{ vcenter.thin_prov | string | lower | bool}}"
