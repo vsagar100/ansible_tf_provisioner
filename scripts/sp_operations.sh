@@ -1,5 +1,5 @@
 #!/bin/bash
-sp_site_collection_url="https://kyndryl.sharepoint.com/teams/Innovation386"
+sp_site_collection_url="https://myonlinesp.sharepoint.com/teams/Innovation386"
 sp_tenant_id="f260df36-bc43-424c-8f44-c85226657b01"
 client_id="1c94ecba-30b3-4cfc-bc23-8d384e87f477@f260df36-bc43-424c-8f44-c85226657b01"
 client_secret="XbCVwYCfr9JZMdXV4FQEO3FxM5M+5MP8DZ6aDW0WjbI="
@@ -9,7 +9,7 @@ curl --location --request GET 'https://accounts.accesscontrol.windows.net/'"${sp
             --form 'grant_type="client_credentials"' \
             --form "client_id=$client_id" \
             --form "client_secret=$client_secret" \
-            --form 'resource="00000003-0000-0ff1-ce00-000000000000/kyndryl.sharepoint.com@'${sp_tenant_id}'"' > output.txt
+            --form 'resource="00000003-0000-0ff1-ce00-000000000000/myonlinesp.sharepoint.com@'${sp_tenant_id}'"' > output.txt
 exit_code=$?
 if [ $exit_code -eq 0 ]; then
   echo "Token generated successfully."
@@ -53,7 +53,7 @@ json_payload='{
     "GitIssueId": "'"$git_issue_id"'"
 }'
 
-curl --location "https://kyndryl.sharepoint.com/teams/Innovation386/_api/web/lists/GetByTitle('Issue%20tracker')/items(1)" \
+curl --location "https://myonlinesp.sharepoint.com/teams/Innovation386/_api/web/lists/GetByTitle('Issue%20tracker')/items(1)" \
 --header "Content-Type: application/json;odata=verbose" \
 --header "Accept: application/json;odata=verbose" \
 --header "X-HTTP-Method: MERGE" \

@@ -14,7 +14,7 @@ gcp:
   client_email: "sv-id-resource-prov@terfform-poc.iam.gserviceaccount.com"
   client_id: "106241824336426945652"
   ############################# End of Subscription Vars Section ########################################
-  git_repo_url: "git@github.kyndryl.net:Sagar-Vispute/terraform_{{item_hypervisor}}_vm_provisioning.git"
+  git_repo_url: "git@github.myonlinesp.net:Sagar-Vispute/terraform_{{item_hypervisor}}_vm_provisioning.git"
   git_branch: "sagar-dev"
   terraform_state: "present"
   region:  "us-west1-a"
@@ -30,7 +30,7 @@ vcenter:
   vmware_host: "{{ lookup('env', 'VMWARE_HOST') }}"
   validate_cert: "{{ lookup('env', 'VMWARE_VALIDATE_CERTS') }}"   
 
-  git_repo_url: "git@github.kyndryl.net:Sagar-Vispute/terraform_vcenter_vm_provisioning.git"
+  git_repo_url: "git@github.myonlinesp.net:Sagar-Vispute/terraform_vcenter_vm_provisioning.git"
   git_branch: "sagar-dev"
   terraform_state: "present"
   datacenter: "DevOps-vLab"
@@ -47,19 +47,20 @@ vcenter:
 
 ############################# Subscription Vars Section ###############################################
 azure:
-  subscription_id: "46b94f70-3b0f-490f-81d9-4bc7421932b4"
-  client_id: "de83caaf-acaa-4ea7-89b6-55367447da9e"
-  tenant_id: "f790de86-ce1b-443a-8ba2-4e5ed3b5bb7d"
+  subscription_id: "21992f77-59a4-45e7-bc29-a0ed7154aad4"
+  client_id: "46acfe37-d28c-4d4e-b95a-0f72eec1c90b"
+  tenant_id: "2ea76f19-9a7b-4ba8-83fe-91f9d505caf8"
+  client_secret: "{{ get_sec_from_user }}"
 ############################# Ens of Subscription Vars Section ########################################
   resource_group_name : "rg1"
-  resource_group_location : "centralindia"
-  storage_account_name: "storage146b94f70"
-  storage_resource_group_name: "storage_rg"
+  resource_group_location : "southindia"
+  storage_account_name: "myonlinesptfbkstorage"
+  storage_resource_group_name: "tf-backend"
 ############################# Terraform Vars Section ##################################################
   terraform_state: "present"
 ############################# End of Terraform Vars Section ###########################################
-  git_repo_url: "https://github.kyndryl.net/Sagar-Vispute/terraform_azure.git"
-  git_branch: "sagar-dev"
+  git_repo_url: "https://github.com/vsagar100/tf_azure.git"
+  git_branch: "dev"
 
   vm_name: "TestVM123"
   vm_user_name: "testuser"
