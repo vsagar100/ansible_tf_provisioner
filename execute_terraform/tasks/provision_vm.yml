@@ -3,7 +3,7 @@
 - name: Set terraform execution directory
   set_fact:
     tf_hypervisor_exec_path: "{{ tf_exec_path }}/{{ item_hypervisor }}/"
-    tf_output_vars_ansible_local_path: "/home/ansible/code/terraform/"
+    tf_output_vars_ansible_local_path: "/home/azureuser/exec_files/tf/"
 
 - name: Get the hypervisor specific var handle
   set_fact:
