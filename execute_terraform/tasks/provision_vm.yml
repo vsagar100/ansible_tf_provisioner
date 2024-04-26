@@ -43,6 +43,7 @@
      src: "{{ item.template_name }}"
   with_items:
     - { template_name: '{{ item_hypervisor}}/vars.tfvars.j2', dest_name: 'vars.tfvars' }
+    - { template_name: '{{ item_hypervisor}}/providers.tf.j2', dest_name: 'providers.tf' }
   when: item_hypervisor == "azure"
 
 - name: Copy required files to execution node vcenter

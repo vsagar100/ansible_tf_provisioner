@@ -1,0 +1,28 @@
+terraform {
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "=3.0.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~>3.0"
+    }
+    tls = {
+      source = "hashicorp/tls"
+      version = "~>4.0"
+    }
+  }
+
+ backend "azurerm" {
+    resource_group_name  = "tf-backend"
+    storage_account_name = "myonlinesptfbkstorage"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+    subscription_id = "{{ azure.subscription_id }}"
+    client_id = "{{ azure.client_id }}"
+    client_secret = "{{ azure.client_secret }}"
+    tenant_id = "{{ azure.tenant_id }}"
+  }
+}
