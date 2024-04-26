@@ -13,7 +13,7 @@
   git:
       repo: "{{ tf_vars.git_repo_url | regex_replace('://', '://'+ git_token + '@') }}"
       dest: "{{ tf_hypervisor_exec_path }}"
-      version: "{{ tf_vars.git_branch}}"
+      version: "vm" #"{{ tf_vars.git_branch}}"
       accept_hostkey: true
       force: yes 
 
