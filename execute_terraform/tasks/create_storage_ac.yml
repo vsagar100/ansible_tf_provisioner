@@ -1,8 +1,8 @@
 ---
   - name: Set terraform execution directory
     set_fact:
-      tf_hypervisor_exec_path: "{{ tf_exec_path }}/azure/"
-      tf_output_vars_ansible_local_path: "/home/azureuser/exec_files/tf/"
+      tf_hypervisor_exec_path: "{{ tf_exec_path }}/azure/storage/runtime"
+      tf_output_vars_ansible_local_path: "{{ tf_exec_path }}/azure/storage/output"
 
   - name: Git checkout
     git:

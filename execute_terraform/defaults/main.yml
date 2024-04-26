@@ -1,6 +1,6 @@
 ---
 # default vars for terraform
-tf_exec_path: "/tmp/terraform"
+tf_exec_path: "/home/azureuser/exec_files/tf"
 
 
   # - aws
